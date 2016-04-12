@@ -15,6 +15,7 @@ int code (char * desc, void * v, FILE * f)
 	int len = 0;
 	if(f == NULL)
 	{
+//teste
 		printf("Erro na abertura do arquivo para escrita.\n");
 		return success;                                                                          /* Retorna -1 */
 	}
@@ -53,7 +54,6 @@ void key(char * desc, char * arr, void * v)
                                 arr[j] = 0x81; 
                         }
                        // arr[j+1] = zigzag((Teste*) v->i1);
-                        printf("%x", arr[j+1]);
                         arr[j+1] = 0xfc;
                         j += 2;
                 }
