@@ -15,7 +15,6 @@ int code (char * desc, void * v, FILE * f)
 	int len = 0;
 	if(f == NULL)
 	{
-//teste
 		printf("Erro na abertura do arquivo para escrita.\n");
 		return success;                                                                          /* Retorna -1 */
 	}
