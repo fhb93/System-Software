@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-char key( char * desc, void * v, int i )
-{
+char key( char * desc, void * v, int i ) {
 	char chave;
-	unsigned int length = 0;
+	int length;
 	
 	length = strlen(desc);			/* determina o comprimento da string desc */
 	
@@ -34,8 +33,39 @@ char key( char * desc, void * v, int i )
 	return chave;
 }
 
-int code (char * desc, void * v, FILE * f)
-{
+long Zigzag ( long n ) {
+	long z;
+
+	z = n << 1;
+
+	if (n < 0)
+		z = ~z;
+
+	return z;
+}
+
+int VerificaTipo ( void * v, int length ) {
+	if ( length * 4 == sizeof(v) )
+		return 4;
+	else
+		return 8;
+}
+
+long SeparaVariavel ( void * v, int i, int var, int len ) {
+	long ret;
+	void * temp = v;
+
+	if ( i > 0 )
+		temp = temp << ( i * var * 8 );
+	else if ( i < len )
+		temp =  temp >> (( sizeof(v) - var ) * ( i * var * 8 ));
+
+	ret = (long) temp;
+
+	return ret;
+}
+
+int code (char * desc, void * v, FILE * f) {
 	int len, i;
 	char chave; 
 	char init = 0xff;
@@ -54,13 +84,15 @@ int code (char * desc, void * v, FILE * f)
 	for( i = 0; i < len; i++ ) {
     	chave = key(desc, v, i);
     	fwrite(&chave, sizeof(char), sizeof(chave), f);
+
+		
 	}
     
 	return 0;
 }
 
 
-
+/*
 int decode (FILE * f);
 
 
@@ -85,3 +117,4 @@ int zigzag(int n)
 	}
 	return z;
 }
+*/
