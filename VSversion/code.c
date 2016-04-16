@@ -136,9 +136,9 @@ int decode (FILE * f)
 {	
     int i;
     int numStructs = 1;
-    long lSize;
+    long lSize; //tamanho do que foi lido no arquivo
     char * buffer;
-   // int boolean;
+   // int boolean; Será usado?
     unsigned int result;
 
 
@@ -154,35 +154,38 @@ int decode (FILE * f)
 	}
 	printf("\n");
 
-    // obtain file size:
+    // obtém o tamanho do arquivo:
     fseek (f, 0 , SEEK_END);
     lSize = ftell (f);
     rewind (f);
 
-    // allocate memory to contain the whole file:
+    // aloca memória para o array buffer
     buffer = (char*) malloc (sizeof(char) * lSize);
 
-    // copy the file into the buffer:
+    // copia o conteúdo do arquivo para dentro do array, nesse caso, result é usada também para checar se houve um erro
+    // no caso, if(lSize == result) { printf("Erro na memoria.\n"); return -1;} 
     result = fread (buffer, 1, lSize, f);
      
     
     for(i = 0; i < result; i++) {
-       
-        if(buffer[i - 1] == NULL) {  //Se for a primeira estrutura do arquivo, estará no início do array
+       //Aqui não sei se faz sentido, pois o for itera sobre o array, mas, e se forem varias estruturas? Em algum lugar esse IF tem que entrar
+        if(buffer[i - 1] == NULL) {  //Se for a primeira estrutura do arquivo, estará no início do array, e o endereço anterior a ela será nulo
             printf("Estrutura %d", numStructs);    
     
             printf("\nMarca de início da estrutura.\n");
             
-            
+            // ^ 0xffffff00 aplica uma máscara no caso de ser 0x81 e 0x82, pois cada indice do array tem 4 bytes, 
+            //como o compilador repete o bit mais significativo, talvez seja necessário fazer esse XOR, quando não for 01 ou 02
             if(((buffer[i + 1] ^ 0xffffff00) == 0x81) || buffer[i + 1] == 0x01) {
                 printf("<int> ");       //printf("<int> 1"); p/ saber de onde veio 
                 
             } else if(((buffer[i + 1] ^ 0xffffff00) == 0x82) || buffer[i + 1] == 0x02) {
                 printf("<long> ");      //printf("<long> 1"); p/ saber de onde veio     
             } 
-            i += 2;
+            i += 2; // ou i++; essa linha não serve para todos os casos de valores
             
             if(((buffer[i - 1] ^ 0xffffff00) == 0x81) || (buffer[i - 1] == 0x01)) {
+            	// imprime a string valor int1, o 1 é um flag para saber de qual if ela veio, qnd se criar outros if com essa printf
                 printf("valor int1\n");    // se o inteiro de 32bits ocupa no maximo 4 bytes, arrumar um jeito de ler até 4 posições do array
                // if(buffer[i] < valorMuitoGrande) { i += valorDeIncremento; } 
                 i++;                         
